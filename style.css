@@ -182,6 +182,84 @@ button[type="submit"]:hover {
   margin-top: 1px;
 }
 
+/* Bouton d'édition */
+.btn-modifier {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.15rem 0.3rem;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.btn-modifier:hover {
+  color: #6366f1;
+  background: #eef2ff;
+}
+
+/* Formulaire d'édition inline */
+.favori-edition {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.favori-edition input {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: #f8fafc;
+}
+
+.favori-edition input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px #6366f120;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.btn-enregistrer {
+  padding: 0.4rem 0.8rem;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-enregistrer:hover {
+  background: #4f46e5;
+}
+
+.btn-annuler {
+  padding: 0.4rem 0.8rem;
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.btn-annuler:hover {
+  background: #f1f5f9;
+}
+
 /* Bouton de suppression */
 .btn-supprimer {
   flex-shrink: 0;

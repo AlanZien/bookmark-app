@@ -88,6 +88,7 @@ function afficherFavoris(favoris) {
           <a href="${echapper(favori.url)}" target="_blank" rel="noopener noreferrer">${echapper(favori.titre)}</a>
           <span class="favori-url">${echapper(favori.url)}</span>
         </div>
+        <button class="btn-modifier" title="Modifier" aria-label="Modifier ${echapper(favori.titre)}">✎</button>
         <button class="btn-supprimer" title="Supprimer" aria-label="Supprimer ${echapper(favori.titre)}">✕</button>
       `;
 
@@ -104,6 +105,38 @@ function afficherFavoris(favoris) {
     .filter(c => c !== CATEGORIE_DEFAUT)
     .map(c => `<option value="${echapper(c)}">`)
     .join('');
+}
+
+/* Remplace le contenu d'une carte par un formulaire d'édition inline */
+function afficherEdition(li, favori, index, favoris, apresModif) {
+  li.innerHTML = `
+    <form class="favori-edition">
+      <input type="text"  class="edit-titre"     value="${echapper(favori.titre)}"              maxlength="100" required>
+      <input type="url"   class="edit-url"        value="${echapper(favori.url)}"                required>
+      <input type="text"  class="edit-categorie"  value="${echapper(favori.categorie || '')}"    maxlength="50" placeholder="Catégorie">
+      <div class="edit-actions">
+        <button type="submit" class="btn-enregistrer">Enregistrer</button>
+        <button type="button" class="btn-annuler">Annuler</button>
+      </div>
+    </form>
+  `;
+
+  const form = li.querySelector('.favori-edition');
+  const inputTitre = li.querySelector('.edit-titre');
+  inputTitre.focus();
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const titre    = inputTitre.value.trim();
+    const url      = li.querySelector('.edit-url').value.trim();
+    const categorie = li.querySelector('.edit-categorie').value.trim();
+    if (!titre || !url) return;
+    favoris[index] = { titre, url, categorie };
+    sauvegarderFavoris(favoris);
+    apresModif();
+  });
+
+  li.querySelector('.btn-annuler').addEventListener('click', apresModif);
 }
 
 /* Échappe les caractères HTML pour éviter les injections XSS */
@@ -194,17 +227,22 @@ function validerChamps(titre, url) {
     champTitre.focus();
   });
 
-  /* Suppression via délégation d'événement sur le conteneur */
+  /* Suppression et édition via délégation d'événement sur le conteneur */
   const conteneur = document.getElementById('liste-favoris');
   conteneur.addEventListener('click', (e) => {
-    const bouton = e.target.closest('.btn-supprimer');
-    if (!bouton) return;
-
-    const li = bouton.closest('.favori');
+    const li = e.target.closest('.favori');
+    if (!li) return;
     const index = parseInt(li.dataset.index, 10);
 
-    favoris.splice(index, 1);
-    sauvegarderFavoris(favoris);
-    filtrerEtAfficher();
+    if (e.target.closest('.btn-supprimer')) {
+      favoris.splice(index, 1);
+      sauvegarderFavoris(favoris);
+      filtrerEtAfficher();
+      return;
+    }
+
+    if (e.target.closest('.btn-modifier')) {
+      afficherEdition(li, favoris[index], index, favoris, filtrerEtAfficher);
+    }
   });
 })();
