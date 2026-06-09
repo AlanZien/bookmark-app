@@ -47,11 +47,20 @@
     <!-- Message d'erreur -->
     <p id="erreur" class="erreur" hidden></p>
 
+    <!-- Barre de recherche -->
+    <input
+      type="search"
+      id="recherche"
+      placeholder="Rechercher un favori..."
+      autocomplete="off"
+      aria-label="Rechercher dans les favoris"
+    >
+
     <!-- Liste des favoris groupés par catégorie -->
     <div id="liste-favoris"></div>
 
-    <!-- Message si la liste est vide -->
-    <p id="liste-vide" class="liste-vide" hidden>Aucun favori enregistré.</p>
+    <!-- Message si la liste est vide ou aucun résultat -->
+    <p id="liste-vide" class="liste-vide" hidden></p>
   </div>
 
   <script src="app.js"></script>

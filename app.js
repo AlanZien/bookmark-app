@@ -41,6 +41,7 @@ function afficherFavoris(favoris) {
   conteneur.innerHTML = '';
 
   if (favoris.length === 0) {
+    msgVide.textContent = 'Aucun favori enregistré.';
     msgVide.hidden = false;
     return;
   }
@@ -138,9 +139,34 @@ function validerChamps(titre, url) {
   const champUrl = document.getElementById('url');
   const champCategorie = document.getElementById('categorie');
   const zoneErreur = document.getElementById('erreur');
+  const champRecherche = document.getElementById('recherche');
 
   let favoris = chargerFavoris();
-  afficherFavoris(favoris);
+
+  function filtrerEtAfficher() {
+    const terme = champRecherche.value.trim().toLowerCase();
+    if (!terme) {
+      afficherFavoris(favoris);
+      return;
+    }
+    const resultats = favoris.filter(f =>
+      f.titre.toLowerCase().includes(terme) ||
+      f.url.toLowerCase().includes(terme)
+    );
+    if (resultats.length === 0) {
+      const conteneur = document.getElementById('liste-favoris');
+      const msgVide = document.getElementById('liste-vide');
+      conteneur.innerHTML = '';
+      msgVide.textContent = `Aucun résultat pour « ${terme} ».`;
+      msgVide.hidden = false;
+      return;
+    }
+    afficherFavoris(resultats);
+  }
+
+  filtrerEtAfficher();
+
+  champRecherche.addEventListener('input', filtrerEtAfficher);
 
   /* Ajout d'un favori */
   form.addEventListener('submit', (e) => {
@@ -161,7 +187,8 @@ function validerChamps(titre, url) {
 
     favoris.push({ titre: titre.trim(), url: url.trim(), categorie });
     sauvegarderFavoris(favoris);
-    afficherFavoris(favoris);
+    champRecherche.value = '';
+    filtrerEtAfficher();
 
     form.reset();
     champTitre.focus();
@@ -178,6 +205,6 @@ function validerChamps(titre, url) {
 
     favoris.splice(index, 1);
     sauvegarderFavoris(favoris);
-    afficherFavoris(favoris);
+    filtrerEtAfficher();
   });
 })();

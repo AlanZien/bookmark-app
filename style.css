@@ -78,6 +78,24 @@ button[type="submit"]:hover {
   margin-bottom: 1rem;
 }
 
+/* Barre de recherche */
+#recherche {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  margin-bottom: 0.25rem;
+  transition: border-color 0.15s;
+}
+
+#recherche:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px #6366f120;
+}
+
 /* Message liste vide */
 .liste-vide {
   color: #94a3b8;
