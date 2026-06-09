@@ -30,13 +30,15 @@ function urlFavicon(siteUrl) {
   }
 }
 
+const CATEGORIE_DEFAUT = 'Sans catégorie';
+
 /* --- Rendu --- */
 
 function afficherFavoris(favoris) {
-  const liste = document.getElementById('liste-favoris');
+  const conteneur = document.getElementById('liste-favoris');
   const msgVide = document.getElementById('liste-vide');
 
-  liste.innerHTML = '';
+  conteneur.innerHTML = '';
 
   if (favoris.length === 0) {
     msgVide.hidden = false;
@@ -45,24 +47,62 @@ function afficherFavoris(favoris) {
 
   msgVide.hidden = true;
 
+  /* Regrouper par catégorie en conservant l'ordre d'insertion */
+  const groupes = {};
   favoris.forEach((favori, index) => {
-    const li = document.createElement('li');
-    li.className = 'favori';
-    li.dataset.index = index;
-
-    const favicon = urlFavicon(favori.url);
-
-    li.innerHTML = `
-      ${favicon ? `<img class="favori-favicon" src="${favicon}" alt="" loading="lazy">` : ''}
-      <div class="favori-lien">
-        <a href="${echapper(favori.url)}" target="_blank" rel="noopener noreferrer">${echapper(favori.titre)}</a>
-        <span class="favori-url">${echapper(favori.url)}</span>
-      </div>
-      <button class="btn-supprimer" title="Supprimer" aria-label="Supprimer ${echapper(favori.titre)}">✕</button>
-    `;
-
-    liste.appendChild(li);
+    const cle = favori.categorie || CATEGORIE_DEFAUT;
+    if (!groupes[cle]) groupes[cle] = [];
+    groupes[cle].push({ favori, index });
   });
+
+  /* Trier les catégories : nommées d'abord (ordre alpha), "Sans catégorie" en dernier */
+  const categories = Object.keys(groupes).sort((a, b) => {
+    if (a === CATEGORIE_DEFAUT) return 1;
+    if (b === CATEGORIE_DEFAUT) return -1;
+    return a.localeCompare(b, 'fr');
+  });
+
+  categories.forEach((categorie) => {
+    const section = document.createElement('section');
+    section.className = 'groupe-categorie';
+
+    const titre = document.createElement('h2');
+    titre.className = 'groupe-categorie-titre';
+    titre.textContent = categorie;
+    section.appendChild(titre);
+
+    const ul = document.createElement('ul');
+    ul.className = 'groupe-liste';
+
+    groupes[categorie].forEach(({ favori, index }) => {
+      const li = document.createElement('li');
+      li.className = 'favori';
+      li.dataset.index = index;
+
+      const favicon = urlFavicon(favori.url);
+
+      li.innerHTML = `
+        ${favicon ? `<img class="favori-favicon" src="${favicon}" alt="" loading="lazy">` : ''}
+        <div class="favori-lien">
+          <a href="${echapper(favori.url)}" target="_blank" rel="noopener noreferrer">${echapper(favori.titre)}</a>
+          <span class="favori-url">${echapper(favori.url)}</span>
+        </div>
+        <button class="btn-supprimer" title="Supprimer" aria-label="Supprimer ${echapper(favori.titre)}">✕</button>
+      `;
+
+      ul.appendChild(li);
+    });
+
+    section.appendChild(ul);
+    conteneur.appendChild(section);
+  });
+
+  /* Mettre à jour le datalist pour l'autocomplétion des catégories */
+  const datalist = document.getElementById('categories-existantes');
+  datalist.innerHTML = categories
+    .filter(c => c !== CATEGORIE_DEFAUT)
+    .map(c => `<option value="${echapper(c)}">`)
+    .join('');
 }
 
 /* Échappe les caractères HTML pour éviter les injections XSS */
@@ -96,8 +136,8 @@ function validerChamps(titre, url) {
   const form = document.getElementById('form-ajout');
   const champTitre = document.getElementById('titre');
   const champUrl = document.getElementById('url');
+  const champCategorie = document.getElementById('categorie');
   const zoneErreur = document.getElementById('erreur');
-  const liste = document.getElementById('liste-favoris');
 
   let favoris = chargerFavoris();
   afficherFavoris(favoris);
@@ -108,6 +148,7 @@ function validerChamps(titre, url) {
 
     const titre = champTitre.value;
     const url = champUrl.value;
+    const categorie = champCategorie.value.trim();
     const erreur = validerChamps(titre, url);
 
     if (erreur) {
@@ -118,7 +159,7 @@ function validerChamps(titre, url) {
 
     zoneErreur.hidden = true;
 
-    favoris.push({ titre: titre.trim(), url: url.trim() });
+    favoris.push({ titre: titre.trim(), url: url.trim(), categorie });
     sauvegarderFavoris(favoris);
     afficherFavoris(favoris);
 
@@ -126,8 +167,9 @@ function validerChamps(titre, url) {
     champTitre.focus();
   });
 
-  /* Suppression via délégation d'événement sur la liste */
-  liste.addEventListener('click', (e) => {
+  /* Suppression via délégation d'événement sur le conteneur */
+  const conteneur = document.getElementById('liste-favoris');
+  conteneur.addEventListener('click', (e) => {
     const bouton = e.target.closest('.btn-supprimer');
     if (!bouton) return;
 

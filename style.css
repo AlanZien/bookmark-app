@@ -85,10 +85,26 @@ button[type="submit"]:hover {
   margin-top: 1.5rem;
 }
 
-/* Liste des favoris */
+/* Conteneur des groupes */
 #liste-favoris {
-  list-style: none;
   margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Groupe par catégorie */
+.groupe-categorie-titre {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.groupe-liste {
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

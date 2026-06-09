@@ -30,14 +30,25 @@
           autocomplete="off"
         >
       </div>
+      <div class="champ">
+        <input
+          type="text"
+          id="categorie"
+          placeholder="Catégorie (optionnel)"
+          autocomplete="off"
+          maxlength="50"
+          list="categories-existantes"
+        >
+        <datalist id="categories-existantes"></datalist>
+      </div>
       <button type="submit">Ajouter</button>
     </form>
 
     <!-- Message d'erreur -->
     <p id="erreur" class="erreur" hidden></p>
 
-    <!-- Liste des favoris -->
-    <ul id="liste-favoris"></ul>
+    <!-- Liste des favoris groupés par catégorie -->
+    <div id="liste-favoris"></div>
 
     <!-- Message si la liste est vide -->
     <p id="liste-vide" class="liste-vide" hidden>Aucun favori enregistré.</p>
