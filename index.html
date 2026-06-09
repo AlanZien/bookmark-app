@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestionnaire de favoris</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>Mes favoris</h1>
+
+    <!-- Formulaire d'ajout de favori -->
+    <form id="form-ajout" novalidate>
+      <div class="champ">
+        <input
+          type="text"
+          id="titre"
+          placeholder="Titre"
+          autocomplete="off"
+          maxlength="100"
+        >
+      </div>
+      <div class="champ">
+        <input
+          type="url"
+          id="url"
+          placeholder="https://exemple.com"
+          autocomplete="off"
+        >
+      </div>
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <!-- Message d'erreur -->
+    <p id="erreur" class="erreur" hidden></p>
+
+    <!-- Liste des favoris -->
+    <ul id="liste-favoris"></ul>
+
+    <!-- Message si la liste est vide -->
+    <p id="liste-vide" class="liste-vide" hidden>Aucun favori enregistré.</p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
